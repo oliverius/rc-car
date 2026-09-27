@@ -80,4 +80,25 @@ public sealed class ManualControlTests
         Assert.Equal(Gear.Second, controls.SelectedGear);
         Assert.Equal(DriveState.Neutral, controls.Read());
     }
+
+    [Fact]
+    public void EnterTogglesLightsOncePerPressAndResetTurnsThemOff()
+    {
+        var controls = new ManualControlInput();
+        controls.Update(true, default);
+        controls.Update(true, new(false, false, false, false, false, true));
+        Assert.True(controls.Read().LightsOn);
+
+        controls.Update(true, new(false, false, false, false, false, true));
+        Assert.True(controls.Read().LightsOn);
+
+        controls.Update(true, default);
+        controls.Update(true, new(false, false, false, false, false, true));
+        Assert.False(controls.Read().LightsOn);
+
+        controls.Update(true, default);
+        controls.Update(true, new(false, false, false, false, false, true));
+        controls.Update(false, default);
+        Assert.Equal(DriveState.Neutral, controls.Read());
+    }
 }

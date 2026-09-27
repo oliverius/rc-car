@@ -5,8 +5,9 @@ public readonly record struct DriveState
     public ThrottleDirection Throttle { get; }
     public SteeringDirection Steering { get; }
     public byte Speed { get; }
+    public bool LightsOn { get; }
 
-    public DriveState(ThrottleDirection throttle, SteeringDirection steering, byte speed)
+    public DriveState(ThrottleDirection throttle, SteeringDirection steering, byte speed, bool lightsOn = false)
     {
         if (!Enum.IsDefined(throttle))
         {
@@ -26,9 +27,10 @@ public readonly record struct DriveState
         Throttle = throttle;
         Steering = steering;
         Speed = throttle == ThrottleDirection.Neutral ? (byte)0 : speed;
+        LightsOn = lightsOn;
     }
 
     public static DriveState Neutral => default;
 
-    public override string ToString() => $"{Throttle} / {Steering}, speed {Speed}";
+    public override string ToString() => $"{Throttle} / {Steering}, speed {Speed}, lights {(LightsOn ? "on" : "off")}";
 }

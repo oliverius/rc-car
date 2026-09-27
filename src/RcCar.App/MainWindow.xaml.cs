@@ -49,7 +49,8 @@ public partial class MainWindow : Window
                         Held(Key.Down) || uiReverse,
                         Held(Key.Left) || uiLeft,
                         Held(Key.Right) || uiRight,
-                        Held(Key.Space)));
+                        Held(Key.Space),
+                        Held(Key.Enter)));
             }
         };
         timer.Start();
@@ -115,6 +116,11 @@ public partial class MainWindow : Window
 
         // Avoid arrow focus navigation or Space activating a button while driving.
         if (model.IsDriving && e.Key is Key.Up or Key.Down or Key.Left or Key.Right or Key.Space)
+        {
+            e.Handled = true;
+        }
+
+        if (model.IsDriving && e.Key == Key.Enter)
         {
             e.Handled = true;
         }

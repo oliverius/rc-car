@@ -53,6 +53,7 @@
                             <Button Content="Forward pulse" Command="{Binding ForwardCommand}" />
                             <Button Content="Steering test" Command="{Binding SteeringCommand}" />
                             <Button Content="Reverse pulse" Command="{Binding ReverseCommand}" />
+                            <Button Content="Lights test" Command="{Binding LightsCommand}" />
                         </WrapPanel>
                         <TextBlock Text="Tests end with repeated neutral." Foreground="#586981" FontSize="12" Margin="0,0,0,12" />
                         <Expander Header="Record what happened" IsExpanded="{Binding ObservationExpanded}">
@@ -73,7 +74,7 @@
                 <StackPanel>
                     <TextBlock Text="03 / Drive" Foreground="White" Style="{StaticResource SectionTitle}" />
                     <TextBlock Text="Turn the car OFF, enable driving, then turn it ON at PUBLISHER READY." Foreground="#D9E6FA" Margin="0,0,0,8" />
-                    <TextBlock Text="Neutral on release · Space changes gear · Esc stops" Foreground="#B8CAE3" FontSize="12" />
+                    <TextBlock Text="Neutral on release · Space changes gear · Enter toggles lights · Esc stops" Foreground="#B8CAE3" FontSize="12" />
                 </StackPanel>
                 <Grid Grid.Column="1" Margin="16,0,0,0">
                     <Grid.ColumnDefinitions>

@@ -43,13 +43,15 @@ Visual Studio is optional; the SDK is sufficient for the scripts above.
 3. **Run diagnostics.** With wheels clear and the power switch reachable, turn
    the car off before each test. Click forward, steering, or reverse; turn it
    on at **PUBLISHER READY**. Each test freshly pairs with the selected identity.
-   Forward/reverse use one 0.3-second pulse at speed 20. Record the observed
-   wheel/light behaviour using **Save physical observation**.
+   Forward/reverse use one 0.3-second pulse at speed 20; **Lights test** sends
+   neutral light-on then light-off states. Record the observed wheel/light
+   behaviour using **Save physical observation**.
 4. **Drive.** Turn the car off, click **Enable keyboard driving**, then switch
    it on at **PUBLISHER READY**. Wait for keyboard readiness and release all
    arrows before starting. Hold arrows to move/steer, release to neutral, and
-   press Space to cycle 40%, 70%, 100%. Escape or **Stop session** ends the
-   session after neutral cleanup. Closing the window also waits for cleanup.
+   press Space to cycle 40%, 70%, 100%. Press Enter to toggle the lights on/off.
+   Escape or **Stop session** ends the session after neutral cleanup. Closing
+   the window also waits for cleanup.
 
 Keyboard control requires the window to be active. Losing focus sends neutral
 and requires release before resuming. Steady neutral refreshes continue while

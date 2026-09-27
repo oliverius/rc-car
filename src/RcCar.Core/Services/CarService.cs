@@ -55,8 +55,25 @@ public sealed class CarService : ICarService
 
         return RunMotionAsync(target, async token =>
         {
-            events.Write(SessionEventKind.Information, $"Starting {test} diagnostic; throttle speed 20, no physical success assumed.");
-            if (test == DiagnosticTest.Steering)
+            events.Write(
+                SessionEventKind.Information,
+                test == DiagnosticTest.Lights
+                    ? "Starting light diagnostic; throttle and steering remain neutral."
+                    : $"Starting {test} diagnostic; throttle speed 20, no physical success assumed.");
+            if (test == DiagnosticTest.Lights)
+            {
+                await SendAsync(
+                    target,
+                    new(ThrottleDirection.Neutral, SteeringDirection.Centre, 0, lightsOn: true),
+                    options.LightTestDuration,
+                    token).ConfigureAwait(false);
+                await SendAsync(
+                    target,
+                    DriveState.Neutral,
+                    options.LightTestDuration,
+                    token).ConfigureAwait(false);
+            }
+            else if (test == DiagnosticTest.Steering)
             {
                 await SendAsync(target, new(ThrottleDirection.Neutral, SteeringDirection.Left, 0), options.RefreshPeriod, token).ConfigureAwait(false);
                 for (var i = 0; i < 2; i++)

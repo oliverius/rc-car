@@ -50,9 +50,10 @@ public sealed class CarProtocol(CarIdentity clientIdentity)
 
         payload[8] = (byte)(throttleFlags | steeringFlags);
         payload[9] = state.Speed;
-        // Preserve the extra forward flag and fixed value emitted by the Android
-        // app. The physical meaning of byte 11 has not been established.
-        payload[10] = state.Throttle == ThrottleDirection.Forward ? (byte)1 : (byte)0;
+        // Bit 0 is the extra forward flag. Bit 2 is the tested light-on flag.
+        payload[10] = (byte)(
+            (state.Throttle == ThrottleDirection.Forward ? 0x01 : 0) |
+            (state.LightsOn ? 0x04 : 0));
         payload[11] = 0x64;
         payload[14] = counter;
 

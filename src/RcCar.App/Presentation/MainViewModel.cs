@@ -109,6 +109,7 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand ForwardCommand { get; }
     public RelayCommand SteeringCommand { get; }
     public RelayCommand ReverseCommand { get; }
+    public RelayCommand LightsCommand { get; }
     public RelayCommand DriveCommand { get; }
     public RelayCommand StopCommand { get; }
     public RelayCommand OpenLogsCommand { get; }
@@ -125,6 +126,7 @@ public sealed class MainViewModel : ObservableObject
         ForwardCommand = Command(() => StartTest(DiagnosticTest.Forward), CanOperateCar);
         SteeringCommand = Command(() => StartTest(DiagnosticTest.Steering), CanOperateCar);
         ReverseCommand = Command(() => StartTest(DiagnosticTest.Reverse), CanOperateCar);
+        LightsCommand = Command(() => StartTest(DiagnosticTest.Lights), CanOperateCar);
         DriveCommand = Command(StartDriving, CanOperateCar);
         StopCommand = Command(Stop, () => busy && !closing);
         OpenLogsCommand = Command(OpenLogs);
@@ -185,7 +187,9 @@ public sealed class MainViewModel : ObservableObject
         {
             await cars.RunTestAsync(target, test, token);
             ObservationExpanded = true;
-            Status = $"{test} transmissions completed. Turn the car OFF and record what you observed.";
+            Status = test == DiagnosticTest.Lights
+                ? "Light test transmissions completed. Turn the car OFF and record what you observed."
+                : $"{test} transmissions completed. Turn the car OFF and record what you observed.";
         });
     }
 
@@ -247,7 +251,17 @@ public sealed class MainViewModel : ObservableObject
     public void PollInput(bool windowActive, HeldControls held)
     {
         var enabled = windowActive && driving && keyboardReady && !closing;
+        var lightsWereOn = input.Read().LightsOn;
         input.Update(enabled, held);
+        var state = input.Read();
+        if (lightsWereOn != state.LightsOn)
+        {
+            var reason = enabled && held.ToggleLights ? "Enter key" : "input reset";
+            log.Write(
+                SessionEventKind.Information,
+                $"Light state changed to {(state.LightsOn ? "on" : "off")} ({reason}).");
+        }
+
         ForwardPressed = enabled && held.Forward;
         ReversePressed = enabled && held.Reverse;
         LeftPressed = enabled && held.Left;
@@ -258,10 +272,15 @@ public sealed class MainViewModel : ObservableObject
         Changed(nameof(RightPressed));
         var selectedGear = input.SelectedGear;
         GearText = $"Gear {(int)selectedGear + 1} · {selectedGear.Speed()}%";
-        RequestedState = input.Read().ToString();
+        RequestedState = state.ToString();
     }
 
-    public void LoseFocus() => input.Reset();
+    public void LoseFocus()
+    {
+        log.Write(SessionEventKind.Information, "Window focus lost; clearing movement and lights.");
+        input.Reset();
+    }
+
     public void DrainEvents()
     {
         for (var i = 0; i < 200 && log.TryRead(out var entry); i++)

@@ -10,6 +10,8 @@ public sealed class ManualControlInput(TimeProvider? timeProvider = null) : ICon
     private readonly object gate = new();
     private bool armed;
     private bool spaceHeld = true;
+    private bool enterHeld = true;
+    private bool lightsOn;
     private DriveState state;
     private long lastUpdate;
     private Gear gear = Gear.First;
@@ -46,6 +48,12 @@ public sealed class ManualControlInput(TimeProvider? timeProvider = null) : ICon
             }
 
             spaceHeld = controls.ChangeGear;
+            if (enabled && controls.ToggleLights && !enterHeld)
+            {
+                lightsOn = !lightsOn;
+            }
+
+            enterHeld = controls.ToggleLights;
             // Opposing buttons cancel each other, just like releasing both.
             var throttle = (controls.Forward, controls.Reverse) switch
             {
@@ -60,7 +68,13 @@ public sealed class ManualControlInput(TimeProvider? timeProvider = null) : ICon
                 _ => SteeringDirection.Centre
             };
 
-            state = enabled && armed ? new DriveState(throttle, steering, gear.Speed()) : DriveState.Neutral;
+            state = enabled
+                ? new DriveState(
+                    armed ? throttle : ThrottleDirection.Neutral,
+                    armed ? steering : SteeringDirection.Centre,
+                    gear.Speed(),
+                    lightsOn)
+                : DriveState.Neutral;
             lastUpdate = time.GetTimestamp();
         }
     }
@@ -71,6 +85,8 @@ public sealed class ManualControlInput(TimeProvider? timeProvider = null) : ICon
         {
             armed = false;
             spaceHeld = true;
+            enterHeld = true;
+            lightsOn = false;
             state = DriveState.Neutral;
         }
     }

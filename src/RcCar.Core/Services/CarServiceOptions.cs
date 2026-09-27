@@ -7,6 +7,7 @@ public sealed record CarServiceOptions
     public TimeSpan RefreshPeriod { get; init; } = TimeSpan.FromMilliseconds(600);
     public TimeSpan InputPollPeriod { get; init; } = TimeSpan.FromMilliseconds(20);
     public TimeSpan PulseDuration { get; init; } = TimeSpan.FromMilliseconds(300);
+    public TimeSpan LightTestDuration { get; init; } = TimeSpan.FromSeconds(2);
     public int CleanupRepetitions { get; init; } = 5;
 
     internal void Validate()
@@ -16,6 +17,7 @@ public sealed record CarServiceOptions
             RefreshPeriod <= TimeSpan.Zero ||
             InputPollPeriod <= TimeSpan.Zero ||
             PulseDuration <= TimeSpan.Zero ||
+            LightTestDuration <= TimeSpan.Zero ||
             CleanupRepetitions < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(CarServiceOptions), "Durations and cleanup repetitions must be positive.");

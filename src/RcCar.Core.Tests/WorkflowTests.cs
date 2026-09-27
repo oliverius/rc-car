@@ -22,6 +22,7 @@ public sealed class WorkflowTests
             PairingWindow = TimeSpan.FromMilliseconds(40),
             RefreshPeriod = TimeSpan.FromMilliseconds(2),
             PulseDuration = TimeSpan.FromMilliseconds(2),
+            LightTestDuration = TimeSpan.FromMilliseconds(2),
             InputPollPeriod = TimeSpan.FromMilliseconds(1),
             CleanupRepetitions = 3
         });
@@ -69,6 +70,24 @@ public sealed class WorkflowTests
         var controls = radio.Packets.Where(payload => payload[1] == 7).ToArray();
         Assert.Equal(new byte[] { 0, 4, 0, 0, 8, 0, 0, 0 }, controls.Select(payload => payload[8]).ToArray());
         Assert.All(controls, payload => Assert.Equal(0, payload[9]));
+    }
+
+    [Fact]
+    public async Task LightDiagnosticTurnsLightsOnThenOffWithoutMotion()
+    {
+        var radio = new FakeBleTransport();
+        await Service(radio).RunTestAsync(Vehicle, DiagnosticTest.Lights, default);
+        var controls = radio.Packets.Where(payload => payload[1] == 7).ToArray();
+
+        Assert.Equal(6, controls.Length); // Initial neutral, on, off, three cleanup packets.
+        Assert.Equal(new byte[] { 0x00, 0x04, 0x00, 0x00, 0x00, 0x00 }, controls.Select(payload => payload[10]).ToArray());
+        Assert.All(controls, payload =>
+        {
+            Assert.Equal(0, payload[8]);
+            Assert.Equal(0, payload[9]);
+            Assert.Equal(0x64, payload[11]);
+            Assert.Equal(0xE9, payload.Aggregate(0, (checksum, value) => checksum ^ value));
+        });
     }
 
     [Fact]

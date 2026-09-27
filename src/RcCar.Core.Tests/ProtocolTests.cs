@@ -24,6 +24,16 @@ public sealed class ProtocolTests
     public void ControlMatchesIndependentVectors(ThrottleDirection throttle, SteeringDirection steering, string expected) =>
         Assert.Equal(expected, Convert.ToHexString(protocol.Control(Vehicle, new(throttle, steering, 20), 1)));
 
+    [Theory]
+    [InlineData(ThrottleDirection.Neutral, "0407F571CD61626300000464000001000000A2")]
+    [InlineData(ThrottleDirection.Forward, "0407F571CD61626301140564000001000000B6")]
+    public void ControlEncodesTestedLightFlagWithoutChangingOtherFields(
+        ThrottleDirection throttle,
+        string expected) =>
+        Assert.Equal(
+            expected,
+            Convert.ToHexString(protocol.Control(Vehicle, new(throttle, SteeringDirection.Centre, 20, lightsOn: true), 1)));
+
     [Fact]
     public void EveryGearAndCounterHasValidChecksumAndNeutralHasNoThrottle()
     {

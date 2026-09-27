@@ -4,5 +4,6 @@ public enum DiagnosticTest
 {
     Forward,
     Steering,
-    Reverse
+    Reverse,
+    Lights
 }
