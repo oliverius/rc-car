@@ -20,13 +20,21 @@ public partial class MainWindow : Window
     };
     private bool closeRequested;
     private bool canClose;
+    private bool uiForward;
+    private bool uiReverse;
+    private bool uiLeft;
+    private bool uiRight;
 
     public MainWindow(MainViewModel model, bool smokeTest = false)
     {
         InitializeComponent();
         this.model = model;
         DataContext = model;
-        Deactivated += (_, _) => model.LoseFocus();
+        Deactivated += (_, _) =>
+        {
+            ClearDriveButtons();
+            model.LoseFocus();
+        };
         Closing += OnClosing;
         PreviewKeyDown += OnPreviewKeyDown;
         timer.Tick += (_, _) =>
@@ -34,13 +42,69 @@ public partial class MainWindow : Window
             model.DrainEvents();
             if (!smokeTest)
             {
-                model.PollInput(IsActive, new HeldControls(Held(Key.Up), Held(Key.Down), Held(Key.Left), Held(Key.Right), Held(Key.Space)));
+                model.PollInput(
+                    IsActive,
+                    new HeldControls(
+                        Held(Key.Up) || uiForward,
+                        Held(Key.Down) || uiReverse,
+                        Held(Key.Left) || uiLeft,
+                        Held(Key.Right) || uiRight,
+                        Held(Key.Space)));
             }
         };
         timer.Start();
     }
 
     private static bool Held(Key key) => (GetAsyncKeyState(KeyInterop.VirtualKeyFromKey(key)) & 0x8000) != 0;
+
+    private void OnForwardMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        uiForward = true;
+        ((UIElement)sender).CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void OnReverseMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        uiReverse = true;
+        ((UIElement)sender).CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void OnLeftMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        uiLeft = true;
+        ((UIElement)sender).CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void OnRightMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        uiRight = true;
+        ((UIElement)sender).CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void OnDriveButtonMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        ClearDriveButtons();
+        ((UIElement)sender).ReleaseMouseCapture();
+        e.Handled = true;
+    }
+
+    private void OnDriveButtonLostMouseCapture(object sender, MouseEventArgs e)
+    {
+        ClearDriveButtons();
+    }
+
+    private void ClearDriveButtons()
+    {
+        uiForward = false;
+        uiReverse = false;
+        uiLeft = false;
+        uiRight = false;
+    }
+
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)

@@ -27,14 +27,18 @@ public sealed class MainViewModel : ObservableObject
     private string gearText = "Gear 1 · 40%";
     private string requestedState = "Neutral";
     private bool observationExpanded;
-    private readonly List<RelayCommand> commands = new();
+    private readonly List<RelayCommand> commands = [];
 
-    public ObservableCollection<CarCandidate> Cars { get; } = new();
-    public ObservableCollection<string> Events { get; } = new();
+    public ObservableCollection<CarCandidate> Cars { get; } = [];
+    public ObservableCollection<string> Events { get; } = [];
     public string LogFolder => log.Folder;
     public bool IsBusy => busy;
     public bool CanSelect => !busy && !closing;
     public bool IsDriving => driving;
+    public bool ForwardPressed { get; private set; }
+    public bool ReversePressed { get; private set; }
+    public bool LeftPressed { get; private set; }
+    public bool RightPressed { get; private set; }
     public string Status
     {
         get => status;
@@ -242,8 +246,18 @@ public sealed class MainViewModel : ObservableObject
 
     public void PollInput(bool windowActive, HeldControls held)
     {
-        input.Update(windowActive && driving && keyboardReady && !closing, held);
-        GearText = $"Gear {(int)input.SelectedGear + 1} · {input.SelectedGear.Speed()}%";
+        var enabled = windowActive && driving && keyboardReady && !closing;
+        input.Update(enabled, held);
+        ForwardPressed = enabled && held.Forward;
+        ReversePressed = enabled && held.Reverse;
+        LeftPressed = enabled && held.Left;
+        RightPressed = enabled && held.Right;
+        Changed(nameof(ForwardPressed));
+        Changed(nameof(ReversePressed));
+        Changed(nameof(LeftPressed));
+        Changed(nameof(RightPressed));
+        var selectedGear = input.SelectedGear;
+        GearText = $"Gear {(int)selectedGear + 1} · {selectedGear.Speed()}%";
         RequestedState = input.Read().ToString();
     }
 
