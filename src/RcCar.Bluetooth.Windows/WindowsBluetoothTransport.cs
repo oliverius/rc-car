@@ -18,20 +18,32 @@ public sealed class WindowsBluetoothTransport(ISessionEvents events) : IAdapterI
 
     public async Task<AdapterInformation> InspectAsync(CancellationToken cancellationToken)
     {
-        var adapter = await BluetoothAdapter.GetDefaultAsync().AsTask(cancellationToken)
-            .WaitAsync(StartupTimeout, cancellationToken).ConfigureAwait(false)
+        var adapter = await BluetoothAdapter
+            .GetDefaultAsync()
+            .AsTask(cancellationToken)
+            .WaitAsync(StartupTimeout, cancellationToken)
+            .ConfigureAwait(false)
             ?? throw new InvalidOperationException("Windows did not return a Bluetooth adapter.");
 
-        var information = await DeviceInformation.CreateFromIdAsync(adapter.DeviceId).AsTask(cancellationToken)
-            .WaitAsync(StartupTimeout, cancellationToken).ConfigureAwait(false);
+        var information = await DeviceInformation
+            .CreateFromIdAsync(adapter.DeviceId)
+            .AsTask(cancellationToken)
+            .WaitAsync(StartupTimeout, cancellationToken)
+            .ConfigureAwait(false);
         
-        var radio = await adapter.GetRadioAsync().AsTask(cancellationToken)
-            .WaitAsync(StartupTimeout, cancellationToken).ConfigureAwait(false);
+        var radio = await adapter
+            .GetRadioAsync()
+            .AsTask(cancellationToken)
+            .WaitAsync(StartupTimeout, cancellationToken)
+            .ConfigureAwait(false);
 
         var result = new AdapterInformation(
-            information.Name, adapter.BluetoothAddress.ToString("X12"),
-            adapter.IsLowEnergySupported, adapter.IsPeripheralRoleSupported,
-            adapter.IsAdvertisementOffloadSupported, radio?.State.ToString() ?? "Unknown");
+            information.Name,
+            adapter.BluetoothAddress.ToString("X12"),
+            adapter.IsLowEnergySupported,
+            adapter.IsPeripheralRoleSupported,
+            adapter.IsAdvertisementOffloadSupported,
+            radio?.State.ToString() ?? "Unknown");
         
         events.Write(SessionEventKind.Information, $"Adapter: {result}");
         

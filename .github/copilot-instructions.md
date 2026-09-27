@@ -22,6 +22,10 @@ steps, and line breaks for long conditions and argument lists. Keep related
 assignments together. Prefer straightforward control flow over dense expressions
 or unnecessary abstractions. Follow `src/.editorconfig`.
 
+For fluent method chains that span multiple lines, put each operation on its own
+line with the dot leading that line. When a method or constructor invocation
+spans multiple lines, put one argument on each line.
+
 Explain the reasons behind non-obvious behavior. For BLE code, describe packet
 offsets, bit flags, units, callback lifetimes, cancellation, and publisher shutdown
 ordering. Distinguish behavior established by protocol evidence from unknown

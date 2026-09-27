@@ -12,7 +12,8 @@ public sealed class WorkflowTests
     private static readonly CarIdentity Vehicle = new(0x11, 0x22, 0x33);
 
     private static CarService Service(FakeBleTransport radio) => new(
-        radio, radio,
+        radio,
+        radio,
         new CarProtocol(new(0x61, 0x62, 0x63)),
         new DiscardingSessionEvents(),
         new CarServiceOptions
@@ -24,6 +25,7 @@ public sealed class WorkflowTests
             InputPollPeriod = TimeSpan.FromMilliseconds(1),
             CleanupRepetitions = 3
         });
+
     [Fact]
     public async Task DiscoveryCollectsMultipleCarsWithoutControlPackets()
     {
@@ -50,6 +52,7 @@ public sealed class WorkflowTests
         var radio = new FakeBleTransport();
         await Service(radio).RunTestAsync(Vehicle, test, default);
         var controls = radio.Packets.Where(payload => payload[1] == 7).ToArray();
+        
         Assert.Equal(5, controls.Length); // Initial neutral, pulse, three cleanup packets.
         Assert.Equal(direction, controls[1][8]);
         Assert.Equal(20, controls[1][9]);

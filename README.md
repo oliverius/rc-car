@@ -66,12 +66,12 @@ movement for that selection until the ambiguity is resolved.
 
 ## Source structure
 
-| Project | Responsibility |
-| --- | --- |
-| `src/RcCar.Core` | Platform-independent identity/state models, packet codec, input lease/gears, and exclusive pairing/control workflows |
-| `src/RcCar.Bluetooth.Windows` | Implements Core's adapter, transmitter, and receiver interfaces using WinRT |
-| `src/RcCar.App` | WPF views, view model, composition, physical keyboard input, and session logging |
-| `src/RcCar.Core.Tests` | xUnit protocol, input, pairing, cancellation, failure, and radio-ownership tests using fake transports |
+| Project                       | Responsibility |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `src/RcCar.Core`              | Platform-independent identity/state models, packet codec, input lease/gears, and exclusive pairing/control workflows |
+| `src/RcCar.Bluetooth.Windows` | Implements Core's adapter, transmitter, and receiver interfaces using WinRT                                          |
+| `src/RcCar.App`               | WPF views, view model, composition, physical keyboard input, and session logging                                     |
+| `src/RcCar.Core.Tests`        | xUnit protocol, input, pairing, cancellation, failure, and radio-ownership tests using fake transports               |
 
 Core has no Windows or UI dependency. The Windows DLL references Core; the app
 composes both through interfaces. A future command-line or Python-facing bridge
