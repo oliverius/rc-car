@@ -69,11 +69,12 @@ arrows cancel; Space advances one gear per press; Enter toggles the tested
 byte-10 light flag once per press. The UI displays requested state, not vehicle
 telemetry.
 
-Focus loss clears movement and requires release before resuming. Core also
-expires an input heartbeat older than 250 ms. This protects against a stalled
-UI while the radio workflow continues, not a frozen process. The keyboard and
-focus APIs stay in the presentation project; the input-state rules can be tested
-without a window.
+Focus loss clears movement and lights and requires release before resuming. Core
+also expires an input heartbeat older than 250 ms, neutralizing movement and
+requiring release without changing the latched light state. This protects
+against a stalled UI while the radio workflow continues, not a frozen process.
+The keyboard and focus APIs stay in the presentation project; the input-state
+rules can be tested without a window.
 
 The WPF view contains layout and bindings. Its code-behind handles actual window
 and keyboard events. The view model coordinates commands and application state;

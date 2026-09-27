@@ -95,11 +95,19 @@ public sealed class ManualControlInput(TimeProvider? timeProvider = null) : ICon
     {
         lock (gate)
         {
-            // Treat missing UI samples as an expired input lease, not a request
-            // to keep driving with the last keys we saw.
+            // Expire stale movement input, but preserve the latched light state:
+            // a delayed UI sample must not turn the lights off. Throttle and
+            // steering are neutralized below, and held keys must be released.
             if (time.GetElapsedTime(lastUpdate) > TimeSpan.FromMilliseconds(250))
             {
-                Reset();
+                armed = false;
+                spaceHeld = true;
+                enterHeld = true;
+                state = new DriveState(
+                    ThrottleDirection.Neutral,
+                    SteeringDirection.Centre,
+                    0,
+                    lightsOn);
             }
 
             return state;

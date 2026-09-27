@@ -39,6 +39,25 @@ public sealed class ManualControlTests
     }
 
     [Fact]
+    public void StaleHeartbeatNeutralizesMotionWithoutTurningOffLights()
+    {
+        var clock = new ManualTimeProvider();
+        var controls = new ManualControlInput(clock);
+        controls.Update(true, default);
+        controls.Update(true, new(false, false, false, false, false, true));
+        controls.Update(true, default);
+        controls.Update(true, Forward);
+        Assert.True(controls.Read().LightsOn);
+
+        clock.Ticks = 251;
+        var state = controls.Read();
+
+        Assert.Equal(ThrottleDirection.Neutral, state.Throttle);
+        Assert.Equal(SteeringDirection.Centre, state.Steering);
+        Assert.True(state.LightsOn);
+    }
+
+    [Fact]
     public void SpaceCyclesOncePerPressDuringDrivingAndWraps()
     {
         var controls = new ManualControlInput();

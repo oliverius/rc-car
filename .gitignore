@@ -31,3 +31,6 @@ TestResults/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Temporary files
+temp/
