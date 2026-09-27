@@ -50,6 +50,8 @@ The next step was a interactive controller. A small window provided held-key and
 
 Arrow keys request forward, reverse, and steering; steering can be combined with throttle. Releasing an arrow neutralizes that axis. Opposite arrows cancel on their axis. When the window loses focus, movement is cleared, and the arrows must be released before driving resumes. Idle neutral refreshes continue even while the window is unfocused.
 
+The app also has a **Lights test** in section 02, which sends neutral states with the byte-10 light flag on and then off. During driving, Enter toggles that flag without changing the throttle or steering input. The tested car's lights turned on with byte 10 set to `0x04`; stopping, focus loss, and final neutral cleanup clear the flag.
+
 The controller refreshes steady states roughly every 600 ms, with an advancing counter, and replaces the requested state when input changes. Windows still controls radio scheduling. The displayed state is what the controller requests, not telemetry from the car.
 
 The owner found the car a little slow. That was consistent with the initial fixed speed of 20; speed had not yet been exposed as a control.

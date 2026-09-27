@@ -65,8 +65,9 @@ the adapter fails or the process is terminated.
 
 Driving is explicitly enabled. Arrow keys elsewhere in the app do not request
 movement. While driving, release neutralizes the appropriate axis; opposing
-arrows cancel; Space advances one gear per press. The UI displays requested
-state, not vehicle telemetry.
+arrows cancel; Space advances one gear per press; Enter toggles the tested
+byte-10 light flag once per press. The UI displays requested state, not vehicle
+telemetry.
 
 Focus loss clears movement and requires release before resuming. Core also
 expires an input heartbeat older than 250 ms. This protects against a stalled

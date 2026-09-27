@@ -44,7 +44,7 @@ The following is a reading aid for logs, not a specification for every app vehic
 
 The app's received pairing-response check does not validate an equivalent reply checksum. Do not infer one from the transmit formula. Also distinguish the 19 application bytes from the enclosing manufacturer advertisement structure: AD length/type and company ID add bytes around it. Windows exposes those parts separately.
 
-The analysis also decoded accessory flag candidates and a GATT route. Neither working headlights/horn controls nor GATT compatibility with this physical unit were established by the completed experiments.
+The standard-car light flag is now physically verified on the tested unit: payload byte 10 bit 2 (`0x04`) turns the lights on while throttle and steering are neutral. The app's light diagnostic and driving toggle use that tested flag. Horn behavior and GATT compatibility with this physical unit have not been established.
 
 ## Contributions that would move the project forward
 

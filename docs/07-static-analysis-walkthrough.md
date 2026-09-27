@@ -108,7 +108,9 @@ In the broadcast manual branch, the instructions multiplied throttle magnitude b
 
 Other branches had GATT-specific boosts and a separate cruise encoding. Importing those values into manual broadcast control would have mixed protocols. Steering here was represented by direction bits; a separate proportional steering magnitude was not demonstrated.
 
-Light, horn, and other button flags were also mapped from their input fields, but finding those mappings did not establish physical accessory behaviour. The completed experiments did not test them.
+The builder sets bit 2 (`0x04`) in payload byte 10 when the app's `active_led_state` is set. Byte 11 remains the constant `0x64`. Initially this mapping was only evidence of what the Android app requested, not proof of a physical effect. A later stationary test held throttle and direction at zero, kept byte 11 at `0x64`, and compared byte 10 values `0x00` and `0x04`. When testing this, the owner reported that the lights turned on during the `0x04` state. This confirms the flag's light-on effect for the tested car and neutral state; it does not establish behavior for other models or whether the lights remain on after the flag is cleared.
+
+The other accessory mappings, including horn and additional LED controls in other vehicle-family controllers, still need independent physical tests. Do not assume those fields or behaviors carry over to the standard-car broadcast protocol.
 
 ## 7. Pairing, identities, and the reply predicate
 
